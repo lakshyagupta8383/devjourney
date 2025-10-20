@@ -34,7 +34,7 @@ export default function ProjectDetailsPage() {
 
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [usersMap, setUsersMap] = useState({}); // ✅ stores UID → name/email
+  const [usersMap, setUsersMap] = useState({});
   const [isSaved, setIsSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
@@ -66,8 +66,6 @@ export default function ProjectDetailsPage() {
     };
   }, [user, projectId]);
 
-  // ✅ Fetch usernames from Firestore
-// ✅ Fetch usernames for *only members* of this project
 useEffect(() => {
   const fetchProjectUsers = async () => {
     if (!project?.members) return;
@@ -95,7 +93,6 @@ useEffect(() => {
 }, [project]);
 
 
-  // ✅ Bookmark toggle
   const toggleBookmark = async () => {
     if (!user) return;
     try {
@@ -112,7 +109,6 @@ useEffect(() => {
     }
   };
 
-  // ✅ Add team member
   const handleAddMember = async () => {
     if (!newMemberEmail.trim() || !project) return;
     setAdding(true);
@@ -156,7 +152,6 @@ useEffect(() => {
     }
   };
 
-  // ✅ Add new task
   const handleAddTask = async (status) => {
     const title = prompt("📝 Enter task title:");
     if (!title) return;
@@ -172,14 +167,13 @@ useEffect(() => {
         assignedTo: "",
         createdAt: serverTimestamp(),
       });
-      alert("✅ Task added successfully!");
+      alert("Task added successfully!");
     } catch (err) {
       console.error("Error adding task:", err);
-      alert("❌ Failed to add task.");
+      alert(" Failed to add task.");
     }
   };
 
-  // ✅ Drag and Drop
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
     if (!destination) return;
@@ -227,17 +221,6 @@ useEffect(() => {
               Tech Stack: {project.techStack?.join(", ") || "—"}
             </p>
           </div>
-
-          <button
-            onClick={toggleBookmark}
-            className="p-2 rounded-lg hover:bg-blue-100 transition-colors"
-          >
-            {isSaved ? (
-              <BookmarkCheck className="w-6 h-6 text-blue-600" />
-            ) : (
-              <Bookmark className="w-6 h-6 text-blue-600" />
-            )}
-          </button>
         </div>
 
         {/* Instruction Banner */}
