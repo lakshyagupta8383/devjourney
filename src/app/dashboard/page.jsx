@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Navbar from '@/components/Navbar';
@@ -12,7 +13,7 @@ import {
 } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <ProtectedRoute>
@@ -33,41 +34,51 @@ export default function DashboardPage() {
             </p>
 
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
+              
               {/* Saved Projects */}
-              <div className="p-6 bg-white border border-blue-200 rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <BookMarked className="text-blue-600 w-6 h-6" />
-                  <h2 className="text-xl font-semibold">Saved Projects</h2>
+              <Link href="/dashboard/projects" className="block">
+                <div className="p-6 bg-white border border-blue-200 rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <BookMarked className="text-blue-600 w-6 h-6" />
+                    <h2 className="text-xl font-semibold">Saved Projects</h2>
+                  </div>
+                  <p className="text-blue-800">
+                    Access your saved projects, edit them, or remove outdated ones.
+                  </p>
                 </div>
-                <p className="text-blue-800">
-                  Access your saved projects, edit them, or remove outdated ones.
-                </p>
-              </div>
+              </Link>
 
-              {/* Resume Builder */}
-              <div className="p-6 bg-white border border-green-200 rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <FileText className="text-green-600 w-6 h-6" />
-                  <h2 className="text-xl font-semibold">Resume Builder</h2>
+              {/* Start Project */}
+              <Link href="/dashboard/start-project" className="block">
+                <div className="p-6 bg-white border border-green-200 rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <FileText className="text-green-600 w-6 h-6" />
+                    <h2 className="text-xl font-semibold">Start Project</h2>
+                  </div>
+                  <p className="text-blue-800">
+                    Build and export your AI-powered workflow for your project.
+                  </p>
                 </div>
-                <p className="text-blue-800">
-                  Build and export your AI-powered resume with ease.
-                </p>
-              </div>
+              </Link>
 
               {/* Profile Settings */}
-              <div className="p-6 bg-white border border-yellow-200 rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <User className="text-yellow-500 w-6 h-6" />
-                  <h2 className="text-xl font-semibold">Profile Settings</h2>
+              <Link href="/dashboard/profile" className="block">
+                <div className="p-6 bg-white border border-yellow-200 rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <User className="text-yellow-500 w-6 h-6" />
+                    <h2 className="text-xl font-semibold">Profile Settings</h2>
+                  </div>
+                  <p className="text-blue-800">
+                    Manage your personal info, email, and password settings.
+                  </p>
                 </div>
-                <p className="text-blue-800">
-                  Manage your personal info, email, and password settings.
-                </p>
-              </div>
+              </Link>
 
               {/* Logout */}
-              <div className="p-6 bg-white border border-red-200 rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer">
+              <button
+                onClick={logout}
+                className="text-left p-6 bg-white border border-red-200 rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer w-full"
+              >
                 <div className="flex items-center gap-3 mb-3">
                   <LogOut className="text-red-600 w-6 h-6" />
                   <h2 className="text-xl font-semibold">Logout</h2>
@@ -75,7 +86,7 @@ export default function DashboardPage() {
                 <p className="text-blue-800">
                   Sign out of your DevJourney account securely.
                 </p>
-              </div>
+              </button>
             </div>
           </div>
         </main>

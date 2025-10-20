@@ -1,9 +1,13 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
-export const AuthContext = createContext({ user: null, loading: true });
+export const AuthContext = createContext({
+  user: null,
+  loading: true,
+  logout: async () => {}, // added default logout function
+});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -16,8 +20,18 @@ export const AuthProvider = ({ children }) => {
     });
   }, []);
 
+  // ✅ Define logout function
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch (err) {
+      console.error("Error logging out:", err);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );

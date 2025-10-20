@@ -20,12 +20,7 @@ export default function Navbar() {
           DevJourney
         </Link>
 
-        <div className="hidden md:flex space-x-6 font-medium">
-          <Link href={route("/dashboard")} className="text-gray-700 hover:text-indigo-600 transition-colors duration-200">Dashboard</Link>
-          <Link href={route("/projects")} className="text-gray-700 hover:text-indigo-600 transition-colors duration-200">Projects</Link>
-          <Link href={route("/resume")} className="text-gray-700 hover:text-indigo-600 transition-colors duration-200">Resume</Link>
-          <Link href={route("/profile")} className="text-gray-700 hover:text-indigo-600 transition-colors duration-200">Profile</Link>
-        </div>
+    
 
         <div className="md:hidden">
           <button

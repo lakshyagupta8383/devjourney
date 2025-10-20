@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Footer from '@/components/Footer';
+
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -13,15 +14,39 @@ export default function SignupPage() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCred = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCred.user;
+
+      // ✅ Call your Firebase Admin API to create Firestore user doc
+      await fetch('/api/createUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: user.uid,
+          name: user.displayName || '', // optional
+          email: user.email,
+          photoURL: user.photoURL || '',
+        }),
+      });
+
       router.push('/dashboard'); // redirect after signup
     } catch (err) {
-      setError(err.message);
+      console.error('Signup error:', err);
+      if (err.code === 'auth/email-already-in-use') {
+        setError('This email is already registered.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('Password should be at least 6 characters long.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Invalid email address.');
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
     }
   };
 
-return (
+  return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-white to-blue-100">
       {/* Main Content */}
       <div className="flex-grow flex items-center justify-center px-4">
