@@ -5,8 +5,8 @@ services:
 
 variables:
   DOCKER_DRIVER: overlay2
-  IMAGE_TAG: registry.gitlab.com/guptalakshya8383/devjourney:$CI_COMMIT_SHORT_SHA
-  LATEST_TAG: registry.gitlab.com/guptalakshya8383/devjourney:latest
+  IMAGE_TAG: "registry.gitlab.com/guptalakshya8383/devjourney:$CI_COMMIT_SHORT_SHA"
+  LATEST_TAG: "registry.gitlab.com/guptalakshya8383/devjourney:latest"
 
 stages:
   - build
@@ -19,8 +19,8 @@ stages:
 build:
   stage: build
   script:
-    - echo "🔨 Building Docker image for DevJourney..."
-    - docker build -t $IMAGE_TAG .
+    - echo "Building Docker image for DevJourney..."
+    - docker build -t "$IMAGE_TAG" .
   only:
     - main
 
@@ -30,12 +30,12 @@ build:
 push:
   stage: push
   script:
-    - echo "🔐 Logging into GitLab Container Registry..."
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - echo "🚀 Pushing Docker image..."
-    - docker push $IMAGE_TAG
-    - docker tag $IMAGE_TAG $LATEST_TAG
-    - docker push $LATEST_TAG
+    - echo "Logging into GitLab Container Registry..."
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - echo "Pushing Docker image..."
+    - docker push "$IMAGE_TAG"
+    - docker tag "$IMAGE_TAG" "$LATEST_TAG"
+    - docker push "$LATEST_TAG"
   only:
     - main
   dependencies:
@@ -48,14 +48,14 @@ deploy:
   stage: deploy
   image: curlimages/curl:latest
   script:
-    - echo "🚀 Triggering deployment on Render..."
-    - curl -X POST "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys" \
-        -H "Authorization: Bearer $RENDER_API_KEY" \
-        -H "Accept: application/json" \
-        -H "Content-Type: application/json"
+    - echo "Triggering deployment on Render..."
+    - >
+      curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys"
+      -H "Authorization: Bearer ${RENDER_API_KEY}"
+      -H "Accept: application/json"
+      -H "Content-Type: application/json"
   only:
     - main
   dependencies:
     - push
   when: on_success
-
