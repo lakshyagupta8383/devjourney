@@ -9,8 +9,7 @@ variables:
   LATEST_TAG: "registry.gitlab.com/guptalakshya8383/devjourney:latest"
 
 stages:
-  - build
-  - push
+  - build_and_push
   - deploy
 
 # ------------------------------------------------
