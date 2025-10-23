@@ -1,39 +1,21 @@
 # Stage 1: Build
 FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files first for better caching
+# Accept Firebase environment variables at build time
+ARG FIREBASE_PROJECT_ID
+ARG FIREBASE_CLIENT_EMAIL
+ARG FIREBASE_PRIVATE_KEY
+
+# Make them available for Next.js build
+ENV FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+ENV FIREBASE_CLIENT_EMAIL=$FIREBASE_CLIENT_EMAIL
+ENV FIREBASE_PRIVATE_KEY=$FIREBASE_PRIVATE_KEY
+
 COPY package*.json ./
-
-# Install ALL dependencies (including dev)
-# This ensures autoprefixer, tailwindcss, postcss, etc. are available
 RUN npm install
-
-
-# Install missing build-time deps only inside Docker image
 RUN npm install -D tailwindcss postcss autoprefixer firebase
 
-
-# Copy the rest of the source code
 COPY . .
-
-# Build your Next.js app
 RUN npm run build
-
-# Stage 2: Run
-FROM node:18-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Copy only what's needed for runtime
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/node_modules ./node_modules
-
-EXPOSE 3000
-CMD ["npm", "start"]
-
