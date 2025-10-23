@@ -13,14 +13,15 @@ stages:
   - deploy
 
 # ------------------------------------------------
-# 1️⃣ BUILD
+# 1️⃣ BUILD & PUSH
 # ------------------------------------------------
 build_and_push:
-  stage: build
+  stage: build_and_push
   script:
-    - echo "Logging into GitLab Container Registry..."
+    - echo "🔐 Logging into GitLab Container Registry..."
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-    - echo "Building and pushing Docker image for DevJourney..."
+
+    - echo "⚙️ Building and tagging Docker image for DevJourney..."
     - |
       docker build \
         --build-arg FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \
@@ -37,19 +38,22 @@ build_and_push:
         --build-arg NEXT_PUBLIC_FIREBASE_APP_ID="$NEXT_PUBLIC_FIREBASE_APP_ID" \
         --build-arg NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="$NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID" \
         -t "$IMAGE_TAG" -t "$LATEST_TAG" .
-    - echo "Pushing image to GitLab registry..."
+
+    - echo "🚀 Pushing Docker image to GitLab registry..."
     - docker push "$IMAGE_TAG"
     - docker push "$LATEST_TAG"
+
   only:
     - main
+
 # ------------------------------------------------
-# 3️⃣ DEPLOY TO RENDER
+# 2️⃣ DEPLOY TO RENDER
 # ------------------------------------------------
 deploy:
   stage: deploy
   image: curlimages/curl:latest
   script:
-    - echo "Triggering deployment on Render..."
+    - echo "🚀 Triggering deployment on Render..."
     - >
       curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys"
       -H "Authorization: Bearer ${RENDER_API_KEY}"
@@ -58,5 +62,5 @@ deploy:
   only:
     - main
   dependencies:
-    - push
+    - build_and_push   # ✅ FIXED: now depends on correct stage
   when: on_success
