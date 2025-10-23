@@ -16,10 +16,12 @@ stages:
 # ------------------------------------------------
 # 1️⃣ BUILD
 # ------------------------------------------------
-build:
+build_and_push:
   stage: build
   script:
-    - echo "Building Docker image for DevJourney..."
+    - echo "Logging into GitLab Container Registry..."
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - echo "Building and pushing Docker image for DevJourney..."
     - |
       docker build \
         --build-arg FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \
@@ -35,27 +37,12 @@ build:
         --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="$NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID" \
         --build-arg NEXT_PUBLIC_FIREBASE_APP_ID="$NEXT_PUBLIC_FIREBASE_APP_ID" \
         --build-arg NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="$NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID" \
-        -t "$IMAGE_TAG" .
-  only:
-    - main
-
-# ------------------------------------------------
-# 2️⃣ PUSH TO GITLAB REGISTRY
-# ------------------------------------------------
-push:
-  stage: push
-  script:
-    - echo "Logging into GitLab Container Registry..."
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-    - echo "Pushing Docker image..."
+        -t "$IMAGE_TAG" -t "$LATEST_TAG" .
+    - echo "Pushing image to GitLab registry..."
     - docker push "$IMAGE_TAG"
-    - docker tag "$IMAGE_TAG" "$LATEST_TAG"
     - docker push "$LATEST_TAG"
   only:
     - main
-  dependencies:
-    - build
-
 # ------------------------------------------------
 # 3️⃣ DEPLOY TO RENDER
 # ------------------------------------------------
