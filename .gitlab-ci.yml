@@ -25,6 +25,7 @@ build:
         --build-arg FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \
         --build-arg FIREBASE_CLIENT_EMAIL="$FIREBASE_CLIENT_EMAIL" \
         --build-arg FIREBASE_PRIVATE_KEY="$FIREBASE_PRIVATE_KEY" \
+        --build-arg OPENAI_API_KEY="$OPENAI_API_KEY" \
         -t "$IMAGE_TAG" .
   only:
     - main
