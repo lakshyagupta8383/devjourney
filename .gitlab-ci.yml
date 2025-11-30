@@ -1,12 +1,13 @@
 image: docker:24.0.5
 
 services:
-  - docker:24.0.5-dind
+  - name: docker:24.0.5-dind
+    command: ["--tls=false"]
 
 variables:
-  DOCKER_TLS_CERTDIR: "/certs"
-  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
   DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
 
 stages:
   - build
@@ -15,8 +16,8 @@ stages:
 build:
   stage: build
   before_script:
-  - echo "🔐 Logging into GitLab Container Registry..."
-  - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin "$CI_REGISTRY"
+    - echo "🔐 Logging into GitLab Container Registry..."
+    - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin "$CI_REGISTRY"
   script:
     - docker build -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" -t "$CI_REGISTRY_IMAGE:latest" .
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
