@@ -12,7 +12,7 @@ export async function POST(req) {
       );
     }
 
-    // 1️⃣ Create the project document first
+    // Create the project document first
     const projectRef = db.collection("projects").doc();
     await projectRef.set({
       name,
@@ -29,7 +29,7 @@ export async function POST(req) {
     let tasks = [];
 
     try {
-      // 2️⃣ Try to generate tasks with OpenAI
+      // Try to generate tasks with OpenAI
       const prompt = `
 You are an expert software planner.
 Create a structured list of development tasks based on the following project:
@@ -65,8 +65,8 @@ Return valid JSON only in this format:
       }
 
     } catch (openaiError) {
-      console.warn("⚠️ OpenAI unavailable or quota exceeded — using mock tasks.");
-      // 3️⃣ Mock fallback tasks
+      console.warn("OpenAI unavailable or quota exceeded — using mock tasks.");
+      // Mock fallback tasks
       tasks = [
         {
           title: "Set up project environment",
@@ -87,7 +87,7 @@ Return valid JSON only in this format:
       ];
     }
 
-    // 4️⃣ Save tasks to Firestore
+    // Save tasks to Firestore
     const batch = db.batch();
     const taskCollection = projectRef.collection("tasks");
 

@@ -28,7 +28,7 @@ export default function AddProjectPage() {
     if (!user) return alert("You must be logged in to add a project!");
 
     try {
-      // ✅ Save under the user's projects collection
+      // Save under the user's projects collection
       const docRef = await addDoc(collection(db, "users", user.uid, "projects"), {
         ...form,
         tags: form.tags.split(",").map((t) => t.trim()),

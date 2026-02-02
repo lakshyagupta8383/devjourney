@@ -1,16 +1,14 @@
-# ---------------------------------------------------------
-# 🧱 Stage 1: Build the Next.js app
-# ---------------------------------------------------------
+# Stage 1: Build the Next.js app
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# ---- Firebase Admin SDK ----
+# Firebase Admin SDK 
 ARG FIREBASE_PROJECT_ID
 ARG FIREBASE_CLIENT_EMAIL
 ARG FIREBASE_PRIVATE_KEY
 
-# ---- Firebase Client SDK ----
+#Firebase Client SDK 
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
 ARG NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
 ARG NEXT_PUBLIC_FIREBASE_PROJECT_ID
@@ -19,12 +17,12 @@ ARG NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
 ARG NEXT_PUBLIC_FIREBASE_APP_ID
 ARG NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 
-# ---- External Services ----
+#External Services
 ARG OPENAI_API_KEY
 ARG RENDER_SERVICE_ID
 ARG RENDER_API_KEY
 
-# ---- Export to environment ----
+#Export to environment
 ENV FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 ENV FIREBASE_CLIENT_EMAIL=$FIREBASE_CLIENT_EMAIL
 ENV FIREBASE_PRIVATE_KEY=$FIREBASE_PRIVATE_KEY
@@ -52,9 +50,7 @@ COPY . .
 # Build the Next.js app
 RUN npm run build
 
-# ---------------------------------------------------------
-# 🚀 Stage 2: Lightweight runtime image
-# ---------------------------------------------------------
+# Stage 2: Lightweight runtime image
 FROM node:20-alpine AS runner
 
 WORKDIR /app

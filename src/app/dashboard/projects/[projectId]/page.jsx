@@ -66,31 +66,37 @@ export default function ProjectDetailsPage() {
     };
   }, [user, projectId]);
 
-useEffect(() => {
-  const fetchProjectUsers = async () => {
-    if (!project?.members) return;
+  useEffect(() => {
+    const fetchProjectUsers = async () => {
+      if (!project?.members) return;
 
-    try {
-      const memberUids = Object.keys(project.members);
-      if (memberUids.length === 0) return;
+      try {
+        const memberUids = Object.keys(project.members);
+        const map = {};
 
-      const q = query(collection(db, "users"), where("uid", "in", memberUids));
-      const snap = await getDocs(q);
+        await Promise.all(
+          memberUids.map(async (uid) => {
+            const userRef = doc(db, "users", uid);
+            const snap = await getDoc(userRef);
 
-      const map = {};
-      snap.docs.forEach((doc) => {
-        const data = doc.data();
-        map[data.uid] = data.name || data.email || "Unknown User";
-      });
+            if (snap.exists()) {
+              const data = snap.data();
+              map[uid] = data.name || data.email || "Unknown User";
+            } else {
+              map[uid] = "Unknown User";
+            }
+          })
+        );
 
-      setUsersMap(map);
-    } catch (err) {
-      console.error("Error fetching member names:", err);
-    }
-  };
+        setUsersMap(map);
+      } catch (err) {
+        console.error("Error fetching member names:", err);
+      }
+    };
 
-  fetchProjectUsers();
-}, [project]);
+    fetchProjectUsers();
+  }, [project?.members]);
+
 
 
   const toggleBookmark = async () => {
@@ -153,9 +159,9 @@ useEffect(() => {
   };
 
   const handleAddTask = async (status) => {
-    const title = prompt("📝 Enter task title:");
+    const title = prompt("Enter task title:");
     if (!title) return;
-    const description = prompt("💬 Enter task description:") || "";
+    const description = prompt("Enter task description:") || "";
 
     try {
       const projectRef = doc(db, "projects", projectId);
@@ -182,7 +188,7 @@ useEffect(() => {
     try {
       const taskRef = doc(db, "projects", projectId, "tasks", draggableId);
       await updateDoc(taskRef, { status: destination.droppableId });
-      console.log(`✅ Task moved to ${destination.droppableId}`);
+      console.log(`Task moved to ${destination.droppableId}`);
     } catch (err) {
       console.error("Error updating task status:", err);
     }
@@ -235,7 +241,7 @@ useEffect(() => {
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <TaskColumn
-              title="🕓 Pending"
+              title="Pending"
               color="blue"
               droppableId="pending"
               tasks={pendingTasks}
@@ -245,7 +251,7 @@ useEffect(() => {
               onAddTask={handleAddTask}
             />
             <TaskColumn
-              title="⚙️ In Progress"
+              title="In Progress"
               color="yellow"
               droppableId="inprogress"
               tasks={inProgressTasks}
@@ -255,7 +261,7 @@ useEffect(() => {
               onAddTask={handleAddTask}
             />
             <TaskColumn
-              title="✅ Completed"
+              title="Completed"
               color="green"
               droppableId="completed"
               tasks={completedTasks}
