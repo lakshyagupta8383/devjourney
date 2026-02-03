@@ -32,14 +32,16 @@ deploy:
   stage: deploy
   image: amazon/aws-cli:2.15.0
   script:
-    - |
-      aws ssm send-command \
-        --instance-ids "$EC2_INSTANCE_ID" \
-        --document-name "AWS-RunShellScript" \
-        --comment "Deploy DevJourney via SSM" \
-        --parameters commands="IMAGE=$CI_REGISTRY_IMAGE:latest bash /home/ubuntu/deploy-devjourney.sh" \
-        --region "$AWS_DEFAULT_REGION"
+    - bash -lc '
+        aws ssm send-command \
+          --instance-ids "$EC2_INSTANCE_ID" \
+          --document-name AWS-RunShellScript \
+          --comment "Deploy DevJourney via SSM" \
+          --parameters "commands=IMAGE=$CI_REGISTRY_IMAGE:latest bash /home/ubuntu/deploy-devjourney.sh" \
+          --region "$AWS_DEFAULT_REGION"
+      '
   only:
     - main
+
 
 
