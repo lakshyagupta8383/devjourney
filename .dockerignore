@@ -1,6 +1,8 @@
 node_modules
 .next
 .git
-.env*
+.gitlab
+.env
+.env.*
 npm-debug.log
-yarn.lock
+yarn-error.log
