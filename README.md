@@ -95,7 +95,7 @@ Live Application
 
 The application is live and accessible at:
 
-https://devjourney.13.235.120.45.sslip.io
+http://devjourney.54.197.150.178.sslip.io
 
 ## Author
 
